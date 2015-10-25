@@ -31,6 +31,10 @@ class TreeTableView: UITableView, UITableViewDataSource,UITableViewDelegate{
         mNodes = TreeNodeHelper.sharedInstance.filterVisibleNode(mAllNodes!)
     }
     
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
 //    =================================================================================
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         // 通过nib自定义tableviewcell
@@ -55,10 +59,6 @@ class TreeTableView: UITableView, UITableViewDataSource,UITableViewDelegate{
         cell.nodeName.text = node.name
         cell.nodeDesc.text = node.desc
         return cell
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
