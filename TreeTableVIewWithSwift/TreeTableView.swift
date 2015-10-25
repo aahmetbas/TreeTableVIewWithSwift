@@ -26,18 +26,20 @@ class TreeTableView: UITableView, UITableViewDataSource,UITableViewDelegate{
         super.init(frame: frame, style: UITableViewStyle.Plain)
         self.delegate = self
         self.dataSource = self
+
         mAllNodes = data
         mNodes = TreeNodeHelper.sharedInstance.filterVisibleNode(mAllNodes!)
     }
     
+//    =================================================================================
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         // 通过nib自定义tableviewcell
         let nib = UINib(nibName: "TreeNodeTableViewCell", bundle: nil)
         tableView.registerNib(nib, forCellReuseIdentifier: NODE_CELL_ID)
         
-        var cell = tableView.dequeueReusableCellWithIdentifier(NODE_CELL_ID) as! TreeNodeTableViewCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(NODE_CELL_ID) as! TreeNodeTableViewCell
         
-        var node: TreeNode = mNodes![indexPath.row]
+        let node: TreeNode = mNodes![indexPath.row]
         
         //cell缩进
         cell.background.bounds.origin.x = -20.0 * CGFloat(node.getLevel())
@@ -58,7 +60,7 @@ class TreeTableView: UITableView, UITableViewDataSource,UITableViewDelegate{
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return (mNodes?.count)!
     }
@@ -68,14 +70,12 @@ class TreeTableView: UITableView, UITableViewDataSource,UITableViewDelegate{
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        var parentNode = mNodes![indexPath.row]
+        let parentNode = mNodes![indexPath.row]
         
-        var startPosition = indexPath.row+1
+        let startPosition = indexPath.row+1
         var endPosition = startPosition
-        
-        if parentNode.isLeaf() {// 点击的节点为叶子节点
-            // do something
-        } else {
+
+        if !parentNode.isLeaf() {// 点击的节点为非叶子节点
             expandOrCollapse(&endPosition, node: parentNode)
             mNodes = TreeNodeHelper.sharedInstance.filterVisibleNode(mAllNodes!) //更新可见节点
             
@@ -93,13 +93,14 @@ class TreeTableView: UITableView, UITableViewDataSource,UITableViewDelegate{
             } else {
                 self.deleteRowsAtIndexPaths(indexPathArray, withRowAnimation: UITableViewRowAnimation.None)
             }
+
             //更新被选组节点
             self.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.None)
             
         }
         
     }
-    
+//    ========================================================================================
     //展开或者关闭某个节点
     func expandOrCollapse(inout count: Int, node: TreeNode) {
         if node.isExpand { //如果当前节点是开着的，需要关闭节点下的所有子节点
@@ -116,6 +117,7 @@ class TreeTableView: UITableView, UITableViewDataSource,UITableViewDelegate{
         if node.isLeaf() {
             return
         }
+
         if node.isExpand {
             node.isExpand = false
             for item in node.children { //关闭子节点

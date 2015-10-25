@@ -10,9 +10,10 @@ import Foundation
 
 
 public class TreeNode {
-    
+    // 类常量，以点号的形式直接调用
     static let NODE_TYPE_G: Int = 0 //表示该节点不是叶子节点
     static let NODE_TYPE_N: Int = 1 //表示节点为叶子节点
+    
     var type: Int?
     var desc: String? // 对于多种类型的内容，需要确定其内容
     var id: String?
@@ -24,6 +25,7 @@ public class TreeNode {
     var children: [TreeNode] = []
     var parent: TreeNode?
     
+//    ==========================================================================
     init (desc: String?, id:String? , pId: String? , name: String?) {
         self.desc = desc
         self.id = id
@@ -31,6 +33,8 @@ public class TreeNode {
         self.name = name
     }
     
+//    ==========================================================================
+
     //是否为根节点
     func isRoot() -> Bool{
         return parent == nil

@@ -12,23 +12,28 @@ import Foundation
 class TreeNodeHelper {
     
     // 单例模式
-    class var sharedInstance: TreeNodeHelper {
-        struct Static {
-            static var instance: TreeNodeHelper?
-            static var token: dispatch_once_t = 0
-        }
-        dispatch_once(&Static.token) { // 该函数意味着代码仅会被运行一次，而且此运行是线程同步
-            Static.instance = TreeNodeHelper()
-        }
-        return Static.instance!
-    }
+//    class var sharedInstance: TreeNodeHelper {
+//        struct Static {
+//            static var instance: TreeNodeHelper?
+//            static var token: dispatch_once_t = 0
+//        }
+//        dispatch_once(&Static.token) { // 该函数意味着代码仅会被运行一次，而且此运行是线程同步
+//            Static.instance = TreeNodeHelper()
+//        }
+//        return Static.instance!
+//    }
     
+
+      static let sharedInstance: TreeNodeHelper = TreeNodeHelper()
+
     
     //传入普通节点，转换成排序后的Node
     func getSortedNodes(groups: NSMutableArray, defaultExpandLevel: Int) -> [TreeNode] {
         var result: [TreeNode] = []
-        var nodes = convetData2Node(groups)
-        var rootNodes = getRootNodes(nodes)
+
+        let nodes = convetData2Node(groups)
+        let rootNodes = getRootNodes(nodes)
+
         for item in rootNodes{
             addNode(&result, node: item, defaultExpandLeval: defaultExpandLevel, currentLevel: 1)
         }
@@ -57,14 +62,13 @@ class TreeNodeHelper {
         var id: String?
         var pId: String?
         var label: String?
-        var type: Int?
         
         for item in groups {
             desc = item["description"] as? String
             id = item["id"] as? String
             pId = item["pid"] as? String
             label = item["name"] as? String
-            
+ 
             node = TreeNode(desc: desc, id: id, pId: pId, name: label)
             nodes.append(node)
         }
@@ -109,18 +113,22 @@ class TreeNodeHelper {
     //把一个节点的所有子节点都挂上去
     func addNode(inout nodes: [TreeNode], node: TreeNode, defaultExpandLeval: Int, currentLevel: Int) {
         nodes.append(node)
+
         if defaultExpandLeval >= currentLevel {
             node.setExpand(true)
         }
+
         if node.isLeaf() {
             return
         }
+
         for (var i=0; i<node.children.count;i++) {
             addNode(&nodes, node: node.children[i], defaultExpandLeval: defaultExpandLeval, currentLevel: currentLevel+1)
         }
     }
     
     // 设置节点图标
+    // 其实，影响了节点的两个属性：type 和 icon
     func setNodeIcon(node: TreeNode) {
         if node.children.count > 0 {
             node.type = TreeNode.NODE_TYPE_G
